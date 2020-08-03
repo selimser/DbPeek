@@ -110,6 +110,8 @@ namespace DbPeek
 
             var configWindow = new ConfigurationControl();
             configWindow.ShowDialog();
+
+            //VsShellUtilities.OpenDocument((IServiceProvider)this.ServiceProvider, "");
         }
     }
 }
