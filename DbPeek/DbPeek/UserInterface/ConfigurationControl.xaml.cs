@@ -39,15 +39,6 @@ namespace DbPeek.UserInterface
             switch (editingMode)
             {
                 case ConnectionEditingMode.Manual:
-                    serverInput.IsEnabled = false;
-                    dbInput.IsEnabled = false;
-                    userIdInput.IsEnabled = false;
-                    passwordInput.IsEnabled = false;
-                    integratedSecurityInput.IsEnabled = false;
-                    connectionStringInput.IsEnabled = true;
-                    break;
-                default:
-                case ConnectionEditingMode.ConnectionString: //fallback to this
                     serverInput.IsEnabled = true;
                     dbInput.IsEnabled = true;
                     userIdInput.IsEnabled = true;
@@ -55,6 +46,20 @@ namespace DbPeek.UserInterface
                     integratedSecurityInput.IsEnabled = true;
                     connectionStringInput.IsEnabled = false;
                     break;
+                default:
+                case ConnectionEditingMode.ConnectionString: //fallback to this
+                    serverInput.IsEnabled = false;
+                    dbInput.IsEnabled = false;
+                    userIdInput.IsEnabled = false;
+                    passwordInput.IsEnabled = false;
+                    integratedSecurityInput.IsEnabled = false;
+                    connectionStringInput.IsEnabled = true;
+                    break;
+            }
+
+            if (CanGenerateConnectionString())
+            {
+                SetConnectionStringToInput();
             }
         }
 
@@ -98,6 +103,20 @@ namespace DbPeek.UserInterface
 
         private void FormControls_LostFocus(object sender, RoutedEventArgs e)
         {
+            if (CanGenerateConnectionString())
+            {
+                SetConnectionStringToInput();
+            }
+        }
+
+        private void SetConnectionStringToInput()
+        {
+            var builtConnectionString = BuildConnectionString();
+            connectionStringInput.Text = builtConnectionString;
+        }
+
+        private bool CanGenerateConnectionString()
+        {
             /*
              Conditions to generate connection string on LostFocus:
                 a. All 4 text boxes are filled with something
@@ -105,19 +124,18 @@ namespace DbPeek.UserInterface
              */
 
             //temporary logic, needs improvement.
-            var canGenerateConnectionString =
-                (
-                    HasValue(serverInput) && HasValue(dbInput) && 
-                    HasValue(userIdInput) && HasValue(passwordInput) && 
-                    !UseIntegratedSecurity()
-                ) ||
-                (HasValue(serverInput) && HasValue(dbInput) && UseIntegratedSecurity());
-            
-            if (canGenerateConnectionString)
+
+            var canGenerateConnectionString = false;
+            if (UseIntegratedSecurity())
             {
-                var builtConnectionString = BuildConnectionString();
-                connectionStringInput.Text = builtConnectionString;
+                canGenerateConnectionString = HasValue(serverInput) && HasValue(dbInput);
             }
+            else
+            {
+                canGenerateConnectionString = HasValue(serverInput) && HasValue(dbInput) && HasValue(userIdInput) && HasValue(passwordInput);
+            }
+
+            return canGenerateConnectionString;
 
             bool HasValue(TextBox target)
             {
@@ -130,6 +148,6 @@ namespace DbPeek.UserInterface
             }
         }
 
-       
+
     }
 }

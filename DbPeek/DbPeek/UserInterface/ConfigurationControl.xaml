@@ -18,7 +18,7 @@
         <TextBox x:Name="dbInput" HorizontalAlignment="Left" Height="23" Margin="110,75,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="220" LostFocus="FormControls_LostFocus"/>
         <TextBox x:Name="userIdInput" HorizontalAlignment="Left" Height="23" Margin="110,103,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="220" LostFocus="FormControls_LostFocus"/>
         <TextBox x:Name="passwordInput" HorizontalAlignment="Left" Height="23" Margin="110,131,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="220" LostFocus="FormControls_LostFocus"/>
-        <CheckBox x:Name="integratedSecurityInput" Content="Windows Authentication" HorizontalAlignment="Left" Margin="110,159,0,0" VerticalAlignment="Top" Checked="integratedSecurityInput_Checked" LostFocus="FormControls_LostFocus"/>
+        <CheckBox x:Name="integratedSecurityInput" Content="Windows Authentication" HorizontalAlignment="Left" Margin="110,159,0,0" VerticalAlignment="Top" Checked="integratedSecurityInput_Checked" Unchecked="integratedSecurityInput_Checked" LostFocus="FormControls_LostFocus"/>
         <Rectangle Fill="Transparent" HorizontalAlignment="Left" Height="160" Margin="335,12,0,0" Stroke="#9e9e9e" VerticalAlignment="Top" Width="1"/>
         <TextBox x:Name="connectionStringInput" HorizontalAlignment="Left" Height="107" Margin="341,47,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="241" AcceptsReturn="True" VerticalScrollBarVisibility="Visible" IsEnabled="False"/>
         <RadioButton x:Name="rbDbManual" Content="Database Information" HorizontalAlignment="Left" Margin="110,20,0,0" VerticalAlignment="Top" IsChecked="True" Checked="rbDbManual_Checked"/>
