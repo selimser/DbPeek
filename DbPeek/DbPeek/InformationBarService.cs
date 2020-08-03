@@ -79,7 +79,6 @@ namespace DbPeek
 
         public void ShowInfoBar(string message, params InfoBarHyperlink[] hyperLinkObjects)
         {
-
             var shell = _serviceProvider.GetService(typeof(SVsShell)) as IVsShell;
             if (shell != null)
             {

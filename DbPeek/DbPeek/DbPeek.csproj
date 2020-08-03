@@ -65,6 +65,7 @@
     <Compile Include="UserInterface\ConfigurationControl.xaml.cs">
       <DependentUpon>ConfigurationControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserInterface\ConnectionEditingMode.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Key.snk" />
