@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using DbPeek.Resources;
+using DbPeek.UserInterface;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Task = System.Threading.Tasks.Task;
@@ -106,6 +107,9 @@ namespace DbPeek
                     new InfoBarHyperlink("Later", HyperlinkCommands.Later)
                 );
             }
+
+            var configWindow = new ConfigurationControl();
+            configWindow.ShowDialog();
         }
     }
 }
