@@ -28,10 +28,10 @@ namespace DbPeek.Helpers.Database
 
         internal struct CommandTempaltes
         {
-            internal const string GetContents = "EXEC [{0}].[{1}];";
+            internal const string GetContents = "EXEC sp_helptext '[{0}].[{1}]';";
         }
 
-        internal async Task<string> GetStoredProcedure(string storedProcedureName)
+        internal async Task<string> GetStoredProcedureAsync(string storedProcedureName)
         {
             var procedureTuple = QueryHelper.ParseStoredProcedureName(storedProcedureName);
 
@@ -49,7 +49,7 @@ namespace DbPeek.Helpers.Database
 
                 using (var command = new SqlCommand(parsedCommand))
                 {
-                    command.CommandType = System.Data.CommandType.StoredProcedure;
+                    command.CommandType = System.Data.CommandType.Text;
                     command.Connection = connection;
 
 
@@ -62,7 +62,7 @@ namespace DbPeek.Helpers.Database
                         {
                             while (await sqlReader.ReadAsync())
                             {
-                                contentBuilder.AppendLine(sqlReader.GetString(0));
+                                contentBuilder.Append(sqlReader.GetString(0));
                             } 
                         }
 

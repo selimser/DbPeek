@@ -54,6 +54,7 @@
     <Compile Include="Helpers\Database\QueryHelper.cs" />
     <Compile Include="Helpers\Database\SpHelper.cs" />
     <Compile Include="Helpers\Editor\EditorHelper.cs" />
+    <Compile Include="Helpers\Editor\FileHelper.cs" />
     <Compile Include="Helpers\Editor\TextViewPosition.cs" />
     <Compile Include="Helpers\Editor\TextViewSelection.cs" />
     <Compile Include="Helpers\NotificationHelper.cs" />

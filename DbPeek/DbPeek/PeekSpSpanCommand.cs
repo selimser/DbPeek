@@ -117,24 +117,18 @@ namespace DbPeek
 
             var capturedText = EditorHelper.GetSelection();
 
-            //TODO: This will still cause deadlocks, need to use JoinableTaskFactory.
-            var dbTask = Task.Run(async () =>
+            //TODO: This will cause deadlocks, need to use JoinableTaskFactory.
+            //var result = SpHelper.Instance.GetStoredProcedureAsync(capturedText.Text)
+            //    .GetAwaiter().GetResult(); //dangerous!
+
+            var result = ThreadHelper.JoinableTaskFactory.Run(async delegate
             {
-                return await SpHelper.Instance.GetStoredProcedure(capturedText.Text);
+                var getSp = await SpHelper.Instance.GetStoredProcedureAsync(capturedText.Text);
+                return getSp;
             });
 
-            var result = dbTask.Result;
-            
-
-
-            //VsShellUtilities.OpenDocument((IServiceProvider)this.ServiceProvider, "");
+            var dumpFile = FileHelper.CreateFileWithContents(result);
+            VsShellUtilities.OpenDocument((IServiceProvider)this.ServiceProvider, @dumpFile);
         }
-
-
-
-
-
-
-
     }
 }

@@ -13,25 +13,65 @@ namespace DbPeek.Helpers.Database
         {
             //check if it contains brackets already.
 
-            var baseText = rawString;
-            if (rawString.Contains('['))
-            {
-                baseText = rawString.Replace("[", string.Empty);
-            }
+            //change it to something like this:
+            //Input.Replace("(", "").Replace(")", "").Replace("-", "");
 
-            if (rawString.Contains(']'))
-            {
-                baseText = rawString.Replace("]", string.Empty);
-            }
 
-            if (baseText.Contains('.'))
+            var filteredSpName = rawString
+                .Replace("[", string.Empty)
+                .Replace("]", string.Empty)
+                .Replace(" ", string.Empty)
+                .Replace(",", string.Empty)
+                .Replace("'", string.Empty)
+                .Replace(":", string.Empty)
+                .Replace(";", string.Empty)
+                .Replace("\"", string.Empty)
+                .Replace("/", string.Empty);
+
+            //var baseText = rawString;
+            //if (baseText.Contains('['))
+            //{
+            //    baseText = baseText.Replace("[", string.Empty);
+            //}
+
+            //if (baseText.Contains(']'))
+            //{
+            //    baseText = baseText.Replace("]", string.Empty);
+            //}
+
+            //if (baseText.Contains(' '))
+            //{
+            //    baseText = baseText.Replace(" ", string.Empty);
+            //}
+
+            //if (baseText.Contains(','))
+            //{
+            //    baseText = baseText.Replace(",", string.Empty);
+            //}
+
+            //if (baseText.Contains('\''))
+            //{
+            //    baseText = baseText.Replace("'", string.Empty);
+            //}
+
+            //if (baseText.Contains(':'))
+            //{
+            //    baseText = baseText.Replace(":", string.Empty);
+            //}
+
+            //if (baseText.Contains(';'))
+            //{
+            //    baseText = baseText.Replace(";", string.Empty);
+            //}
+
+            if (filteredSpName.Contains('.'))
             {
-                var schemaSplit = baseText.Split('.');
+                var schemaSplit = filteredSpName.Split('.');
                 return new Tuple<string, string>(schemaSplit[0], schemaSplit[1]);
             }
             else
             {
-                return new Tuple<string, string>("dbo", baseText);
+                return new Tuple<string, string>("dbo", filteredSpName);
             }
         }
     }
