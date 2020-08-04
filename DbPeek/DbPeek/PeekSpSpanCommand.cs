@@ -1,12 +1,10 @@
-﻿using System;
-using System.ComponentModel.Design;
-using System.Globalization;
-using System.Threading;
-using System.Threading.Tasks;
-using DbPeek.Resources;
-using DbPeek.UserInterface;
+﻿using DbPeek.Helpers;
+using DbPeek.Helpers.Database;
+using DbPeek.Helpers.Editor;
 using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.Threading;
+using System;
+using System.ComponentModel.Design;
 using Task = System.Threading.Tasks.Task;
 
 namespace DbPeek
@@ -47,6 +45,7 @@ namespace DbPeek
             commandService.AddCommand(menuItem);
 
             InformationBarService.Initialize((IServiceProvider)this.ServiceProvider);
+
         }
 
         /// <summary>
@@ -82,6 +81,9 @@ namespace DbPeek
             OleMenuCommandService commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
             Instance = new PeekSpSpanCommand(package, commandService);
 
+            SettingsHelper.Initialise(package);
+            NotificationHelper.Initialise(package);
+            EditorHelper.Initialise(package);
 
         }
 
@@ -98,7 +100,8 @@ namespace DbPeek
             //If not, show an info bar with "Configure DB Strings"
             //Otherwise, carry on as usual.
 
-            if (Convert.ToBoolean(ExtensionSettings.IsFirstTimeLaunch))
+
+            if (!SettingsHelper.ReadSetting<bool>("IsExtensionConfigured"))
             {
                 InformationBarService.Instance.ShowInfoBar
                 (
@@ -106,12 +109,32 @@ namespace DbPeek
                     new InfoBarHyperlink("Configure", HyperlinkCommands.Configure),
                     new InfoBarHyperlink("Later", HyperlinkCommands.Later)
                 );
+
+                return;
             }
 
-            var configWindow = new ConfigurationControl();
-            configWindow.ShowDialog();
+            //if everything's alright, capture the selected text.
+
+            var capturedText = EditorHelper.GetSelection();
+
+            //TODO: This will still cause deadlocks, need to use JoinableTaskFactory.
+            var dbTask = Task.Run(async () =>
+            {
+                return await SpHelper.Instance.GetStoredProcedure(capturedText.Text);
+            });
+
+            var result = dbTask.Result;
+            
+
 
             //VsShellUtilities.OpenDocument((IServiceProvider)this.ServiceProvider, "");
         }
+
+
+
+
+
+
+
     }
 }

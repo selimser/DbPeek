@@ -1,7 +1,6 @@
-﻿using System.Reflection.Emit;
-using System.Text;
+﻿using DbPeek.Helpers;
+using System;
 using System.Windows;
-using System.Windows.Controls;
 using WorkAlready;
 
 namespace DbPeek.UserInterface
@@ -15,6 +14,7 @@ namespace DbPeek.UserInterface
         {
             InitializeComponent();
             SetDefaultWindowProperties();
+            SetExistingConnectionString();
         }
 
         private void SetDefaultWindowProperties()
@@ -22,132 +22,46 @@ namespace DbPeek.UserInterface
             Title = "Configure DbPeek";
             ResizeMode = ResizeMode.NoResize;
             WindowStartupLocation = WindowStartupLocation.CenterScreen; //or center owner better? (vs centre)
+
+#if DEBUG
+            btnResetAllSettings_DEBUG.IsEnabled = true;
+            btnResetAllSettings_DEBUG.Visibility = Visibility.Visible;
+#endif
         }
 
-        private void rbDbManual_Checked(object sender, RoutedEventArgs e)
+        private void SetExistingConnectionString()
         {
-            SetMode(ConnectionEditingMode.Manual);
+            connectionStringInput.Text = SettingsHelper.ReadSetting<string>("TargetConnectionString");
         }
 
-        private void rbDbConnectionString_Checked(object sender, RoutedEventArgs e)
+        private void btnSaveSettings_Click(object sender, RoutedEventArgs e)
         {
-            SetMode(ConnectionEditingMode.ConnectionString);
-        }
-
-        private void SetMode(ConnectionEditingMode editingMode)
-        {
-            switch (editingMode)
+            if (string.IsNullOrWhiteSpace(connectionStringInput.Text))
             {
-                case ConnectionEditingMode.Manual:
-                    serverInput.IsEnabled = true;
-                    dbInput.IsEnabled = true;
-                    userIdInput.IsEnabled = true;
-                    passwordInput.IsEnabled = true;
-                    integratedSecurityInput.IsEnabled = true;
-                    connectionStringInput.IsEnabled = false;
-                    break;
-                default:
-                case ConnectionEditingMode.ConnectionString: //fallback to this
-                    serverInput.IsEnabled = false;
-                    dbInput.IsEnabled = false;
-                    userIdInput.IsEnabled = false;
-                    passwordInput.IsEnabled = false;
-                    integratedSecurityInput.IsEnabled = false;
-                    connectionStringInput.IsEnabled = true;
-                    break;
+                MessageBox.Show("Connection string cannot be empty");
+                return;
             }
 
-            if (CanGenerateConnectionString())
+            try
             {
-                SetConnectionStringToInput();
-            }
-        }
+                SettingsHelper.WriteSetting("TargetConnectionString", connectionStringInput.Text);
 
-        private string BuildConnectionString()
-        {
-            var connectionBuilder = new StringBuilder();
-            connectionBuilder.Append($"server={serverInput.Text};");
-            connectionBuilder.Append($"database={serverInput.Text};");
-
-            if (UseIntegratedSecurity())
-            {
-                connectionBuilder.Append("integrated security=true;");
-            }
-            else
-            {
-                connectionBuilder.Append($"user id={userIdInput.Text};");
-                connectionBuilder.Append($"password={passwordInput.Text};");
-            }
-
-            return connectionBuilder.ToString();
-        }
-
-        private bool UseIntegratedSecurity()
-        {
-            return integratedSecurityInput.IsChecked ?? false;
-        }
-
-        private void integratedSecurityInput_Checked(object sender, RoutedEventArgs e)
-        {
-            if (UseIntegratedSecurity())
-            {
-                userIdInput.IsEnabled = false;
-                passwordInput.IsEnabled = false;
-            }
-            else
-            {
-                userIdInput.IsEnabled = true;
-                passwordInput.IsEnabled = true;
-            }
-        }
-
-        private void FormControls_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (CanGenerateConnectionString())
-            {
-                SetConnectionStringToInput();
-            }
-        }
-
-        private void SetConnectionStringToInput()
-        {
-            var builtConnectionString = BuildConnectionString();
-            connectionStringInput.Text = builtConnectionString;
-        }
-
-        private bool CanGenerateConnectionString()
-        {
-            /*
-             Conditions to generate connection string on LostFocus:
-                a. All 4 text boxes are filled with something
-                b. Server and Database filled in + WinAuth is checked
-             */
-
-            //temporary logic, needs improvement.
-
-            var canGenerateConnectionString = false;
-            if (UseIntegratedSecurity())
-            {
-                canGenerateConnectionString = HasValue(serverInput) && HasValue(dbInput);
-            }
-            else
-            {
-                canGenerateConnectionString = HasValue(serverInput) && HasValue(dbInput) && HasValue(userIdInput) && HasValue(passwordInput);
-            }
-
-            return canGenerateConnectionString;
-
-            bool HasValue(TextBox target)
-            {
-                if (!string.IsNullOrWhiteSpace(target.Text))
+                if (!SettingsHelper.ReadSetting<bool>("IsExtensionConfigured"))
                 {
-                    return true;
+                    SettingsHelper.WriteSetting("IsExtensionConfigured", true);
                 }
-
-                return false;
             }
+            catch (Exception ex)
+            {
+                NotificationHelper.PopMessage
+                (
+                    "Error", 
+                    $"An error occurred when saving the setting.\n{ex.Message}\n{ex.StackTrace}",
+                    messageIcon: Microsoft.VisualStudio.Shell.Interop.OLEMSGICON.OLEMSGICON_WARNING
+                );
+            }
+
+            Close();
         }
-
-
     }
 }
