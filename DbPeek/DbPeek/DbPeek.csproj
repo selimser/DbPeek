@@ -60,6 +60,7 @@
     <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="HyperlinkCommands.cs" />
     <Compile Include="InformationBarService.cs" />
+    <Compile Include="PeekConfigureCommand.cs" />
     <Compile Include="PeekSpSpanCommand.cs" />
     <Compile Include="PeekSpSpanCommandPackage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -96,6 +97,7 @@
     <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="16.6.2058" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\PeekConfigureCommand.png" />
     <Content Include="Resources\PeekSpSpanCommand.png" />
     <Content Include="Resources\PeekSpSpanCommandPackage.ico" />
     <VSCTCompile Include="PeekSpSpanCommandPackage.vsct">

@@ -1,12 +1,27 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <Extern href="stdidcmd.h"/>
-  <Extern href="vsshlids.h"/>
+  <Extern href="stdidcmd.h" />
+  <Extern href="vsshlids.h" />
   <Commands package="guidPeekSpSpanCommandPackage">
+
+
+    <Menus>
+      <Menu guid="guidPeekSpSpanCommandPackageCmdSet1" id="TopLevelMenu" priority="0x700" type="Menu">
+        <Parent guid="guidSHLMainMenu"
+                id="IDG_VS_MM_TOOLSADDINS" />
+        <Strings>
+          <ButtonText>TestMenu</ButtonText>
+          <CommandName>Db Peek</CommandName>
+        </Strings>
+      </Menu>
+    </Menus>
 
     <Groups>
       <Group guid="guidPeekSpSpanCommandPackageCmdSet" id="MyMenuGroup" priority="0x0600">
-        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_CODEWIN"/>
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_CODEWIN" />
+      </Group>
+      <Group guid="guidPeekSpSpanCommandPackageCmdSet1" id="MyMenuGroup" priority="0x0600">
+        <Parent guid="guidPeekSpSpanCommandPackageCmdSet1" id="TopLevelMenu" />
       </Group>
     </Groups>
 
@@ -19,10 +34,20 @@
           <ButtonText>View Stored Procedure</ButtonText>
         </Strings>
       </Button>
+      <Button guid="guidPeekSpSpanCommandPackageCmdSet1" id="cmdidPeekConfigureCommand" priority="0x0100" type="Button">
+        <Parent guid="guidPeekSpSpanCommandPackageCmdSet1" id="MyMenuGroup" />
+        <Icon guid="guidImages1" id="bmpPic1" />
+        <Strings>
+          <ButtonText>Configure</ButtonText>
+        </Strings>
+      </Button>
+
+
     </Buttons>
-    
+
     <Bitmaps>
-      <Bitmap guid="guidImages" href="Resources\PeekSpSpanCommand.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough"/>
+      <Bitmap guid="guidImages" href="Resources\PeekSpSpanCommand.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough" />
+      <Bitmap guid="guidImages1" href="Resources\PeekConfigureCommand.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough" />
     </Bitmaps>
   </Commands>
 
@@ -33,9 +58,25 @@
     <GuidSymbol name="guidPeekSpSpanCommandPackageCmdSet" value="{60d43e44-102a-400c-a90b-09f71d120950}">
       <IDSymbol name="MyMenuGroup" value="0x1020" />
       <IDSymbol name="PeekSpSpanCommandId" value="0x0100" />
+
     </GuidSymbol>
 
-    <GuidSymbol name="guidImages" value="{706db53f-ae54-4a31-baec-10f29b05a459}" >
+    <GuidSymbol name="guidImages" value="{706db53f-ae54-4a31-baec-10f29b05a459}">
+      <IDSymbol name="bmpPic1" value="1" />
+      <IDSymbol name="bmpPic2" value="2" />
+      <IDSymbol name="bmpPicSearch" value="3" />
+      <IDSymbol name="bmpPicX" value="4" />
+      <IDSymbol name="bmpPicArrows" value="5" />
+      <IDSymbol name="bmpPicStrikethrough" value="6" />
+    </GuidSymbol>
+
+    <GuidSymbol value="{b5c35229-5517-4c7c-ba9d-6e5a7eb5e2cf}" name="guidPeekSpSpanCommandPackageCmdSet1">
+      <IDSymbol value="4128" name="MyMenuGroup" />
+      <IDSymbol value="256" name="cmdidPeekConfigureCommand" />
+      <IDSymbol name="TopLevelMenu" value="0x1021" />
+    </GuidSymbol>
+
+    <GuidSymbol value="{c3cf86ca-776f-411c-81df-8124a9bbf713}" name="guidImages1">
       <IDSymbol name="bmpPic1" value="1" />
       <IDSymbol name="bmpPic2" value="2" />
       <IDSymbol name="bmpPicSearch" value="3" />
