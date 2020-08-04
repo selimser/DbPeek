@@ -1,14 +1,10 @@
-﻿using System;
-using System.ComponentModel.Design;
-using System.Globalization;
-using System.Threading;
-using System.Threading.Tasks;
-using DbPeek.UserInterface;
+﻿using DbPeek.UserInterface;
 using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
+using System;
+using System.ComponentModel.Design;
 using Task = System.Threading.Tasks.Task;
 
-namespace DbPeek
+namespace DbPeek.Commands
 {
     /// <summary>
     /// Command handler
@@ -42,7 +38,7 @@ namespace DbPeek
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
 
             var menuCommandID = new CommandID(CommandSet, CommandId);
-            var menuItem = new MenuCommand(this.Execute, menuCommandID);
+            var menuItem = new MenuCommand(Execute, menuCommandID);
             commandService.AddCommand(menuItem);
         }
 
@@ -62,7 +58,7 @@ namespace DbPeek
         {
             get
             {
-                return this.package;
+                return package;
             }
         }
 

@@ -1,17 +1,14 @@
-﻿using DbPeek.Helpers;
+﻿using DbPeek.Services.Notification;
 using DbPeek.UserInterface;
+using Microsoft;
 using Microsoft.VisualStudio.Imaging;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace DbPeek
+namespace DbPeek.Services.InfoBar
 {
-    class InformationBarService : IVsInfoBarUIEvents
+    internal class InformationBarService : IVsInfoBarUIEvents
     {
         private readonly IServiceProvider _serviceProvider;
         private uint _cookie;
@@ -33,7 +30,7 @@ namespace DbPeek
             infoBarUIElement.Unadvise(_cookie);
         }
 
-        private readonly AsyncPackage package;
+        //private readonly AsyncPackage package;
 
         public void OnActionItemClicked(IVsInfoBarUIElement infoBarUIElement, IVsInfoBarActionItem actionItem)
         {
@@ -50,13 +47,13 @@ namespace DbPeek
                     _ = infoBarUIElement.Unadvise(_cookie);
                     break;
                 case nameof(HyperlinkCommands.No):
-                    NotificationHelper.PopMessage("Click Action", "You clicked No");
+                    NotificationService.PopMessage("Click Action", "You clicked No");
                     break;
                 case nameof(HyperlinkCommands.Ok):
-                    NotificationHelper.PopMessage("Click Action", "You clicked Ok");
+                    NotificationService.PopMessage("Click Action", "You clicked Ok");
                     break;
                 case nameof(HyperlinkCommands.Yes):
-                    NotificationHelper.PopMessage("Click Action", "You clicked Yes");
+                    NotificationService.PopMessage("Click Action", "You clicked Yes");
                     break;
                 default:
                     //close the thingy by default
@@ -68,8 +65,7 @@ namespace DbPeek
 
         public void ShowInfoBar(string message, params InfoBarHyperlink[] hyperLinkObjects)
         {
-            var shell = _serviceProvider.GetService(typeof(SVsShell)) as IVsShell;
-            if (shell != null)
+            if (_serviceProvider.GetService(typeof(SVsShell)) is IVsShell shell)
             {
                 shell.GetProperty((int)__VSSPROPID7.VSSPROPID_MainWindowInfoBarHost, out var obj);
                 var host = (IVsInfoBarHost)obj;
@@ -79,9 +75,6 @@ namespace DbPeek
                     return;
                 }
                 var text = new InfoBarTextSpan(message);
-
-                //var yes = new InfoBarHyperlink("Yes", "yes");
-                //var no = new InfoBarHyperlink("No", "no");
 
                 var spans = new InfoBarTextSpan[] { text };
 
@@ -94,6 +87,7 @@ namespace DbPeek
                 var infoBarModel = new InfoBarModel(spans, actions, KnownMonikers.StatusInformation, isCloseButtonVisible: true);
 
                 var factory = _serviceProvider.GetService(typeof(SVsInfoBarUIFactory)) as IVsInfoBarUIFactory;
+                Assumes.Present(factory);
                 IVsInfoBarUIElement element = factory.CreateInfoBar(infoBarModel);
                 element.Advise(this, out _cookie);
                 host.AddInfoBar(element);

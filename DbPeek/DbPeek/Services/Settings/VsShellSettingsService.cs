@@ -1,12 +1,10 @@
 ﻿using Microsoft.VisualStudio.Settings;
 using Microsoft.VisualStudio.Shell.Settings;
 using System;
-using System.CodeDom;
-using System.Windows.Markup.Localizer;
 
-namespace DbPeek.Helpers
+namespace DbPeek.Services.Settings
 {
-    internal static class SettingsHelper
+    internal static class VsShellSettingsService
     {
         private static IServiceProvider _serviceProvider;
         private static SettingsManager _settingsManager;

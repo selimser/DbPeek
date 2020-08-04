@@ -51,30 +51,25 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Helpers\Database\QueryHelper.cs" />
-    <Compile Include="Helpers\Database\SpHelper.cs" />
-    <Compile Include="Helpers\Editor\EditorHelper.cs" />
-    <Compile Include="Helpers\Editor\FileHelper.cs" />
-    <Compile Include="Helpers\Editor\TextViewPosition.cs" />
-    <Compile Include="Helpers\Editor\TextViewSelection.cs" />
-    <Compile Include="Helpers\NotificationHelper.cs" />
-    <Compile Include="Helpers\SettingsHelper.cs" />
-    <Compile Include="HyperlinkCommands.cs" />
-    <Compile Include="InformationBarService.cs" />
-    <Compile Include="PeekConfigureCommand.cs" />
-    <Compile Include="PeekSpSpanCommand.cs" />
+    <Compile Include="Services\Database\QueryService.cs" />
+    <Compile Include="Services\Database\SpUtilService.cs" />
+    <Compile Include="Services\Editor\EditorService.cs" />
+    <Compile Include="Services\Editor\FileService.cs" />
+    <Compile Include="Services\Notification\NotificationService.cs" />
+    <Compile Include="Services\Settings\VsShellSettingsService.cs" />
+    <Compile Include="Models\HyperlinkCommands.cs" />
+    <Compile Include="Services\InfoBar\InformationBarService.cs" />
+    <Compile Include="Commands\PeekConfigureCommand.cs" />
+    <Compile Include="Commands\PeekSpSpanCommand.cs" />
     <Compile Include="PeekSpSpanCommandPackage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserInterface\BaseDialogWindow.cs" />
     <Compile Include="UserInterface\ConfigurationControl.xaml.cs">
       <DependentUpon>ConfigurationControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserInterface\ConnectionEditingMode.cs" />
+    <Compile Include="Models\ConnectionEditingMode.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\.editorconfig">
-      <Link>.editorconfig</Link>
-    </None>
     <None Include="Key.snk" />
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>

@@ -3,13 +3,13 @@ using System.IO;
 
 namespace DbPeek.Helpers.Editor
 {
-    internal static class FileHelper
+    internal static class FileService
     {
         //create a temp file with guid name.sql and open that.
 
         private static string DbPeekDumpPath;
 
-        static FileHelper()
+        static FileService()
         {
             SetDumpPath();
             CreateDumpFolder();
@@ -30,7 +30,7 @@ namespace DbPeek.Helpers.Editor
 
         internal static string CreateFileWithContents(string fileContents)
         {
-            var dumpFileName = $@"{DbPeekDumpPath}\{Guid.NewGuid().ToString("d")}.sql";
+            var dumpFileName = $@"{DbPeekDumpPath}\{Guid.NewGuid():d}.sql";
             File.WriteAllText(dumpFileName, fileContents);
             return dumpFileName;
         }

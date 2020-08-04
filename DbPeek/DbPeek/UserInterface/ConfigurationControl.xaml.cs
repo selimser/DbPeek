@@ -1,7 +1,7 @@
-﻿using DbPeek.Helpers;
+﻿using DbPeek.Services.Notification;
+using DbPeek.Services.Settings;
 using System;
 using System.Windows;
-using WorkAlready;
 
 namespace DbPeek.UserInterface
 {
@@ -31,7 +31,7 @@ namespace DbPeek.UserInterface
 
         private void SetExistingConnectionString()
         {
-            connectionStringInput.Text = SettingsHelper.ReadSetting<string>("TargetConnectionString");
+            connectionStringInput.Text = VsShellSettingsService.ReadSetting<string>("TargetConnectionString");
         }
 
         private void btnSaveSettings_Click(object sender, RoutedEventArgs e)
@@ -44,16 +44,16 @@ namespace DbPeek.UserInterface
 
             try
             {
-                SettingsHelper.WriteSetting("TargetConnectionString", connectionStringInput.Text);
+                VsShellSettingsService.WriteSetting("TargetConnectionString", connectionStringInput.Text);
 
-                if (!SettingsHelper.ReadSetting<bool>("IsExtensionConfigured"))
+                if (!VsShellSettingsService.ReadSetting<bool>("IsExtensionConfigured"))
                 {
-                    SettingsHelper.WriteSetting("IsExtensionConfigured", true);
+                    VsShellSettingsService.WriteSetting("IsExtensionConfigured", true);
                 }
             }
             catch (Exception ex)
             {
-                NotificationHelper.PopMessage
+                NotificationService.PopMessage
                 (
                     "Error", 
                     $"An error occurred when saving the setting.\n{ex.Message}\n{ex.StackTrace}",

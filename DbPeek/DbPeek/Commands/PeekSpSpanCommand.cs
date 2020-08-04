@@ -1,13 +1,15 @@
-﻿using DbPeek.Helpers;
-using DbPeek.Helpers.Database;
-using DbPeek.Helpers.Editor;
+﻿using DbPeek.Helpers.Editor;
+using DbPeek.Services.Database;
+using DbPeek.Services.Editor;
+using DbPeek.Services.InfoBar;
+using DbPeek.Services.Notification;
+using DbPeek.Services.Settings;
 using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Threading;
 using System;
 using System.ComponentModel.Design;
 using Task = System.Threading.Tasks.Task;
 
-namespace DbPeek
+namespace DbPeek.Commands
 {
     /// <summary>
     /// Command handler
@@ -41,10 +43,10 @@ namespace DbPeek
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
 
             var menuCommandID = new CommandID(CommandSet, CommandId);
-            var menuItem = new MenuCommand(this.Execute, menuCommandID);
+            var menuItem = new MenuCommand(Execute, menuCommandID);
             commandService.AddCommand(menuItem);
 
-            InformationBarService.Initialize((IServiceProvider)this.ServiceProvider);
+            InformationBarService.Initialize((IServiceProvider)ServiceProvider);
 
         }
 
@@ -60,11 +62,11 @@ namespace DbPeek
         /// <summary>
         /// Gets the service provider from the owner package.
         /// </summary>
-        private Microsoft.VisualStudio.Shell.IAsyncServiceProvider ServiceProvider
+        private IAsyncServiceProvider ServiceProvider
         {
             get
             {
-                return this.package;
+                return package;
             }
         }
 
@@ -81,9 +83,9 @@ namespace DbPeek
             OleMenuCommandService commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
             Instance = new PeekSpSpanCommand(package, commandService);
 
-            SettingsHelper.Initialise(package);
-            NotificationHelper.Initialise(package);
-            EditorHelper.Initialise(package);
+            VsShellSettingsService.Initialise(package);
+            NotificationService.Initialise(package);
+            EditorService.Initialise(package);
 
         }
 
@@ -101,7 +103,7 @@ namespace DbPeek
             //Otherwise, carry on as usual.
 
 
-            if (!SettingsHelper.ReadSetting<bool>("IsExtensionConfigured"))
+            if (!VsShellSettingsService.ReadSetting<bool>("IsExtensionConfigured"))
             {
                 InformationBarService.Instance.ShowInfoBar
                 (
@@ -115,7 +117,7 @@ namespace DbPeek
 
             //if everything's alright, capture the selected text.
 
-            var capturedText = EditorHelper.GetSelection();
+            var capturedText = EditorService.GetSelection();
 
             //TODO: This will cause deadlocks, need to use JoinableTaskFactory.
             //var result = SpHelper.Instance.GetStoredProcedureAsync(capturedText.Text)
@@ -123,12 +125,12 @@ namespace DbPeek
 
             var result = ThreadHelper.JoinableTaskFactory.Run(async delegate
             {
-                var getSp = await SpHelper.Instance.GetStoredProcedureAsync(capturedText.Text);
+                var getSp = await SpUtilsService.Instance.GetStoredProcedureAsync(capturedText.Text);
                 return getSp;
             });
 
-            var dumpFile = FileHelper.CreateFileWithContents(result);
-            VsShellUtilities.OpenDocument((IServiceProvider)this.ServiceProvider, @dumpFile);
+            var dumpFile = FileService.CreateFileWithContents(result);
+            VsShellUtilities.OpenDocument((IServiceProvider)ServiceProvider, @dumpFile);
         }
     }
 }

@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-    xmlns:local="clr-namespace:WorkAlready" 
+    xmlns:local="clr-namespace:DbPeek.UserInterface" 
     mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="280" 
     Width="300" Height="280">
     <Grid Background="#FF252526">
