@@ -1,4 +1,6 @@
-﻿using Microsoft.VisualStudio.Imaging;
+﻿using DbPeek.Helpers;
+using DbPeek.UserInterface;
+using Microsoft.VisualStudio.Imaging;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using System;
@@ -40,21 +42,21 @@ namespace DbPeek
             switch (context)
             {
                 case nameof(HyperlinkCommands.Configure):
-                    //run the Configure command
-
-                    PopMessage("Click Action", "You clicked Configure");
+                    _ = infoBarUIElement.Unadvise(_cookie);
+                    var configWindow = new ConfigurationControl();
+                    configWindow.ShowDialog();
                     break;
                 case nameof(HyperlinkCommands.Later):
-                    PopMessage("Click Action", "You clicked Later");
+                    _ = infoBarUIElement.Unadvise(_cookie);
                     break;
                 case nameof(HyperlinkCommands.No):
-                    PopMessage("Click Action", "You clicked No");
+                    NotificationHelper.PopMessage("Click Action", "You clicked No");
                     break;
                 case nameof(HyperlinkCommands.Ok):
-                    PopMessage("Click Action", "You clicked Ok");
+                    NotificationHelper.PopMessage("Click Action", "You clicked Ok");
                     break;
                 case nameof(HyperlinkCommands.Yes):
-                    PopMessage("Click Action", "You clicked Yes");
+                    NotificationHelper.PopMessage("Click Action", "You clicked Yes");
                     break;
                 default:
                     //close the thingy by default
@@ -63,23 +65,9 @@ namespace DbPeek
             }
         }
 
-        private void PopMessage(string title, string message, OLEMSGICON messageIcon = OLEMSGICON.OLEMSGICON_INFO, OLEMSGBUTTON messageButton = OLEMSGBUTTON.OLEMSGBUTTON_OK, OLEMSGDEFBUTTON defaultButton = OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST)
-        {
-            VsShellUtilities.ShowMessageBox
-            (
-               _serviceProvider,
-               message,
-               title,
-               messageIcon,
-               messageButton,
-               defaultButton
-            );
-        }
-
 
         public void ShowInfoBar(string message, params InfoBarHyperlink[] hyperLinkObjects)
         {
-
             var shell = _serviceProvider.GetService(typeof(SVsShell)) as IVsShell;
             if (shell != null)
             {

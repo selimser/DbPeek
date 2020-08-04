@@ -1,10 +1,11 @@
-﻿using DbPeek.Helpers;
-using DbPeek.Helpers.Database;
-using DbPeek.Helpers.Editor;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Threading;
-using System;
+﻿using System;
 using System.ComponentModel.Design;
+using System.Globalization;
+using System.Threading;
+using System.Threading.Tasks;
+using DbPeek.UserInterface;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 using Task = System.Threading.Tasks.Task;
 
 namespace DbPeek
@@ -12,17 +13,17 @@ namespace DbPeek
     /// <summary>
     /// Command handler
     /// </summary>
-    internal sealed class PeekSpSpanCommand
+    internal sealed class PeekConfigureCommand
     {
         /// <summary>
         /// Command ID.
         /// </summary>
-        public const int CommandId = 0x0100;
+        public const int CommandId = 256;
 
         /// <summary>
         /// Command menu group (command set GUID).
         /// </summary>
-        public static readonly Guid CommandSet = new Guid("60d43e44-102a-400c-a90b-09f71d120950");
+        public static readonly Guid CommandSet = new Guid("b5c35229-5517-4c7c-ba9d-6e5a7eb5e2cf");
 
         /// <summary>
         /// VS Package that provides this command, not null.
@@ -30,12 +31,12 @@ namespace DbPeek
         private readonly AsyncPackage package;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PeekSpSpanCommand"/> class.
+        /// Initializes a new instance of the <see cref="PeekConfigureCommand"/> class.
         /// Adds our command handlers for menu (commands must exist in the command table file)
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
         /// <param name="commandService">Command service to add command to, not null.</param>
-        private PeekSpSpanCommand(AsyncPackage package, OleMenuCommandService commandService)
+        private PeekConfigureCommand(AsyncPackage package, OleMenuCommandService commandService)
         {
             this.package = package ?? throw new ArgumentNullException(nameof(package));
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
@@ -43,15 +44,12 @@ namespace DbPeek
             var menuCommandID = new CommandID(CommandSet, CommandId);
             var menuItem = new MenuCommand(this.Execute, menuCommandID);
             commandService.AddCommand(menuItem);
-
-            InformationBarService.Initialize((IServiceProvider)this.ServiceProvider);
-
         }
 
         /// <summary>
         /// Gets the instance of the command.
         /// </summary>
-        public static PeekSpSpanCommand Instance
+        public static PeekConfigureCommand Instance
         {
             get;
             private set;
@@ -74,17 +72,12 @@ namespace DbPeek
         /// <param name="package">Owner package, not null.</param>
         public static async Task InitializeAsync(AsyncPackage package)
         {
-            // Switch to the main thread - the call to AddCommand in PeekSpSpanCommand's constructor requires
+            // Switch to the main thread - the call to AddCommand in PeekConfigureCommand's constructor requires
             // the UI thread.
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
 
             OleMenuCommandService commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
-            Instance = new PeekSpSpanCommand(package, commandService);
-
-            SettingsHelper.Initialise(package);
-            NotificationHelper.Initialise(package);
-            EditorHelper.Initialise(package);
-
+            Instance = new PeekConfigureCommand(package, commandService);
         }
 
         /// <summary>
@@ -96,39 +89,10 @@ namespace DbPeek
         /// <param name="e">Event args.</param>
         private void Execute(object sender, EventArgs e)
         {
-            //TODO: Check if the extension is configured first.
-            //If not, show an info bar with "Configure DB Strings"
-            //Otherwise, carry on as usual.
+            ThreadHelper.ThrowIfNotOnUIThread();
 
-
-            if (!SettingsHelper.ReadSetting<bool>("IsExtensionConfigured"))
-            {
-                InformationBarService.Instance.ShowInfoBar
-                (
-                    "Hi! Looks like DbPeek is initialised for the first time. Configure now?",
-                    new InfoBarHyperlink("Configure", HyperlinkCommands.Configure),
-                    new InfoBarHyperlink("Later", HyperlinkCommands.Later)
-                );
-
-                return;
-            }
-
-            //if everything's alright, capture the selected text.
-
-            var capturedText = EditorHelper.GetSelection();
-
-            //TODO: This will cause deadlocks, need to use JoinableTaskFactory.
-            //var result = SpHelper.Instance.GetStoredProcedureAsync(capturedText.Text)
-            //    .GetAwaiter().GetResult(); //dangerous!
-
-            var result = ThreadHelper.JoinableTaskFactory.Run(async delegate
-            {
-                var getSp = await SpHelper.Instance.GetStoredProcedureAsync(capturedText.Text);
-                return getSp;
-            });
-
-            var dumpFile = FileHelper.CreateFileWithContents(result);
-            VsShellUtilities.OpenDocument((IServiceProvider)this.ServiceProvider, @dumpFile);
+            var configWindow = new ConfigurationControl();
+            configWindow.ShowDialog();
         }
     }
 }
