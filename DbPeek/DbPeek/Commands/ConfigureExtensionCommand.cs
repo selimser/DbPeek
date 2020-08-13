@@ -51,16 +51,6 @@ namespace DbPeek.Commands
             private set;
         }
 
-        /// <summary>
-        /// Gets the service provider from the owner package.
-        /// </summary>
-        private Microsoft.VisualStudio.Shell.IAsyncServiceProvider ServiceProvider
-        {
-            get
-            {
-                return package;
-            }
-        }
 
         /// <summary>
         /// Initializes the singleton instance of the command.
@@ -71,8 +61,9 @@ namespace DbPeek.Commands
             // Switch to the main thread - the call to AddCommand in PeekConfigureCommand's constructor requires
             // the UI thread.
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
-
-            OleMenuCommandService commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
+            
+            var commandService = 
+                await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
             Instance = new ConfigureExtensionCommand(package, commandService);
         }
 
