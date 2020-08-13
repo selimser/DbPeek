@@ -1,6 +1,9 @@
 # DbPeek
 DbPeek is a Microsoft Visual Studio extension that lets you peak into stored procedures (for now) of a database with ease. Project started because of need to frequently view stored procedures. It was (and being) developed because there was a need for it!
 
+![DbPeekAnim](https://user-images.githubusercontent.com/16270624/90183968-5053bd00-ddac-11ea-8382-81c52ef65de0.gif)
+
+
 ## Documentation
 You can find the documentation on the repository's [Wiki section](https://github.com/selimser/DbPeek/wiki).
 
