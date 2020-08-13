@@ -8,19 +8,19 @@ using System;
 
 namespace DbPeek.Services.InfoBar
 {
-    internal class InformationBarService : IVsInfoBarUIEvents
+    internal class InfoBarService : IVsInfoBarUIEvents
     {
         private readonly IServiceProvider _serviceProvider;
         private uint _cookie;
 
-        public static InformationBarService Instance { get; private set; }
+        public static InfoBarService Instance { get; private set; }
 
         public static void Initialize(IServiceProvider serviceProvider)
         {
-            Instance = new InformationBarService(serviceProvider);
+            Instance = new InfoBarService(serviceProvider);
         }
 
-        public InformationBarService(IServiceProvider serviceProvider)
+        public InfoBarService(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
         }

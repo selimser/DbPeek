@@ -12,7 +12,7 @@ namespace DbPeek.Services.Editor
             _serviceProvider = serviceProvider;
         }
 
-        internal static TextViewSelection GetSelection()
+        internal static string GetSelection()
         {
             var service = _serviceProvider.GetService(typeof(SVsTextManager));
             var textManager = service as IVsTextManager2;
@@ -22,10 +22,10 @@ namespace DbPeek.Services.Editor
             var start = new TextViewPosition(startLine, startColumn);
             var end = new TextViewPosition(endLine, endColumn);
 
-            view.GetSelectedText(out string selectedText);
+            view.GetSelectedText(out var selectedText);
 
             var selection = new TextViewSelection(start, end, selectedText);
-            return selection;
+            return selection.Text;
         }
 
         public struct TextViewPosition

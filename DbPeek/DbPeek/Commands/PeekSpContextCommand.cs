@@ -14,7 +14,7 @@ namespace DbPeek.Commands
     /// <summary>
     /// Command handler
     /// </summary>
-    internal sealed class PeekSpSpanCommand
+    internal sealed class PeekSpContextCommand
     {
         /// <summary>
         /// Command ID.
@@ -32,12 +32,12 @@ namespace DbPeek.Commands
         private readonly AsyncPackage package;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PeekSpSpanCommand"/> class.
+        /// Initializes a new instance of the <see cref="PeekSpContextCommand"/> class.
         /// Adds our command handlers for menu (commands must exist in the command table file)
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
         /// <param name="commandService">Command service to add command to, not null.</param>
-        private PeekSpSpanCommand(AsyncPackage package, OleMenuCommandService commandService)
+        private PeekSpContextCommand(AsyncPackage package, OleMenuCommandService commandService)
         {
             this.package = package ?? throw new ArgumentNullException(nameof(package));
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
@@ -46,14 +46,14 @@ namespace DbPeek.Commands
             var menuItem = new MenuCommand(Execute, menuCommandID);
             commandService.AddCommand(menuItem);
 
-            InformationBarService.Initialize((IServiceProvider)ServiceProvider);
+            InfoBarService.Initialize((IServiceProvider)ServiceProvider);
 
         }
 
         /// <summary>
         /// Gets the instance of the command.
         /// </summary>
-        public static PeekSpSpanCommand Instance
+        public static PeekSpContextCommand Instance
         {
             get;
             private set;
@@ -81,7 +81,7 @@ namespace DbPeek.Commands
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
 
             OleMenuCommandService commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
-            Instance = new PeekSpSpanCommand(package, commandService);
+            Instance = new PeekSpContextCommand(package, commandService);
 
             VsShellSettingsService.Initialise(package);
             NotificationService.Initialise(package);
@@ -105,7 +105,7 @@ namespace DbPeek.Commands
 
             if (!VsShellSettingsService.ReadSetting<bool>("IsExtensionConfigured"))
             {
-                InformationBarService.Instance.ShowInfoBar
+                InfoBarService.Instance.ShowInfoBar
                 (
                     "Hi! Looks like DbPeek is initialised for the first time. Configure now?",
                     new InfoBarHyperlink("Configure", HyperlinkCommands.Configure),
@@ -116,21 +116,24 @@ namespace DbPeek.Commands
             }
 
             //if everything's alright, capture the selected text.
-
             var capturedText = EditorService.GetSelection();
-
-            //TODO: This will cause deadlocks, need to use JoinableTaskFactory.
-            //var result = SpHelper.Instance.GetStoredProcedureAsync(capturedText.Text)
-            //    .GetAwaiter().GetResult(); //dangerous!
-
-            var result = ThreadHelper.JoinableTaskFactory.Run(async delegate
+            if (!string.IsNullOrWhiteSpace(capturedText))
             {
-                var getSp = await SpUtilsService.Instance.GetStoredProcedureAsync(capturedText.Text);
-                return getSp;
-            });
+                try
+                {
+                    var result = ThreadHelper.JoinableTaskFactory.Run(async delegate
+                    {
+                        return await SpUtilsService.Instance.GetStoredProcedureAsync(capturedText);
+                    });
 
-            var dumpFile = FileService.CreateFileWithContents(result);
-            VsShellUtilities.OpenDocument((IServiceProvider)ServiceProvider, @dumpFile);
+                    var dumpFile = FileService.CreateFileWithContents(result);
+                    VsShellUtilities.OpenDocument((IServiceProvider)ServiceProvider, @dumpFile);
+                }
+                catch (Exception ex)
+                {
+                    NotificationService.PopMessage("Something went wrong!", ex.Message);
+                }
+            }
         }
     }
 }
