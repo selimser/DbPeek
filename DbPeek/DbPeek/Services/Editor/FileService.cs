@@ -6,8 +6,9 @@ namespace DbPeek.Helpers.Editor
     internal static class FileService
     {
         private const string DumpFolderName = "DbPeek_Dump";
+        private static readonly string[] SuffixCollection = { "bytes", "KB", "MB", "GB" };
+
         private static string DbPeekDumpPath => Path.Combine(Path.GetTempPath(), DumpFolderName);
-        
 
         static FileService()
         {
@@ -55,20 +56,14 @@ namespace DbPeek.Helpers.Editor
 
         internal static string AsFormatted(this long totalBytes)
         {
-            return SizeSuffix(totalBytes, 2);
+            return GetSizeUnit(totalBytes, 2);
         }
 
-        private static readonly string[] SuffixCollection = { "bytes", "KB", "MB", "GB" };
-        private static string SizeSuffix(long value, int precision = 2)
+        private static string GetSizeUnit(long value, uint precision = 2)
         {
-            if (precision < 0)
-            {
-                throw new ArgumentOutOfRangeException("decimalPlaces");
-            }
-
             if (value < 0)
             {
-                return "-" + SizeSuffix(-value);
+                return "-" + GetSizeUnit(-value);
             }
 
             if (value == 0)
@@ -79,7 +74,7 @@ namespace DbPeek.Helpers.Editor
             int mag = (int)Math.Log(value, 1024);
             decimal adjustedSize = (decimal)value / (1L << (mag * 10));
 
-            if (Math.Round(adjustedSize, precision) >= 1000)
+            if (Math.Round(adjustedSize, (int)precision) >= 1000)
             {
                 mag += 1;
                 adjustedSize /= 1024;

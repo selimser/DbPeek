@@ -19,35 +19,35 @@ namespace DbPeek.Services.Editor
             _ = textManager.GetActiveView2(1, null, (uint)_VIEWFRAMETYPE.vftCodeWindow, out IVsTextView view);
 
             view.GetSelection(out var startLine, out var startColumn, out var endLine, out var endColumn);
-            var start = new TextViewPosition(startLine, startColumn);
-            var end = new TextViewPosition(endLine, endColumn);
+            var start = new EditorTextPosition(startLine, startColumn);
+            var end = new EditorTextPosition(endLine, endColumn);
 
             view.GetSelectedText(out var selectedText);
 
-            var selection = new TextViewSelection(start, end, selectedText);
+            var selection = new EditorTextSelection(start, end, selectedText);
             return selection.Text;
         }
 
-        public struct TextViewPosition
+        internal struct EditorTextPosition
         {
-            public int Line { get; }
+            public int Row { get; }
             public int Column { get; }
 
-            public TextViewPosition(int line, int column)
+            public EditorTextPosition(int row, int column)
             {
-                Line = line;
+                Row = row;
                 Column = column;
             }
 
-            public static bool operator <(TextViewPosition a, TextViewPosition b)
+            public static bool operator <(EditorTextPosition firstPosition, EditorTextPosition secondPosition)
             {
-                if (a.Line < b.Line)
+                if (firstPosition.Row < secondPosition.Row)
                 {
                     return true;
                 }
-                else if (a.Line == b.Line)
+                else if (firstPosition.Row == secondPosition.Row)
                 {
-                    return a.Column < b.Column;
+                    return firstPosition.Column < secondPosition.Column;
                 }
                 else
                 {
@@ -55,15 +55,15 @@ namespace DbPeek.Services.Editor
                 }
             }
 
-            public static bool operator >(TextViewPosition a, TextViewPosition b)
+            public static bool operator >(EditorTextPosition firstPosition, EditorTextPosition secondPosition)
             {
-                if (a.Line > b.Line)
+                if (firstPosition.Row > secondPosition.Row)
                 {
                     return true;
                 }
-                else if (a.Line == b.Line)
+                else if (firstPosition.Row == secondPosition.Row)
                 {
-                    return a.Column > b.Column;
+                    return firstPosition.Column > secondPosition.Column;
                 }
                 else
                 {
@@ -71,28 +71,28 @@ namespace DbPeek.Services.Editor
                 }
             }
 
-            public static TextViewPosition Min(TextViewPosition a, TextViewPosition b)
+            internal static EditorTextPosition Min(EditorTextPosition a, EditorTextPosition b)
             {
                 return a > b ? b : a;
             }
 
-            public static TextViewPosition Max(TextViewPosition a, TextViewPosition b)
+            internal static EditorTextPosition Max(EditorTextPosition a, EditorTextPosition b)
             {
                 return a > b ? a : b;
             }
         }
 
-        internal struct TextViewSelection
+        internal struct EditorTextSelection
         {
-            public TextViewPosition StartPosition { get; set; }
-            public TextViewPosition EndPosition { get; set; }
-            public string Text { get; set; }
+            internal EditorTextPosition StartPosition { get; set; }
+            internal EditorTextPosition EndPosition { get; set; }
+            internal string Text { get; set; }
 
-            public TextViewSelection(TextViewPosition a, TextViewPosition b, string text)
+            public EditorTextSelection(EditorTextPosition a, EditorTextPosition b, string textContent)
             {
-                StartPosition = TextViewPosition.Min(a, b);
-                EndPosition = TextViewPosition.Max(a, b);
-                Text = text;
+                StartPosition = EditorTextPosition.Min(a, b);
+                EndPosition = EditorTextPosition.Max(a, b);
+                Text = textContent;
             }
         }
     }

@@ -26,6 +26,9 @@ namespace DbPeek.Services.Database
             }
         }
 
+        /// <summary>
+        /// Each template for specific version will go here (e.g. support for older versions)
+        /// </summary>
         internal struct CommandTempaltes
         {
             internal const string GetContents = "EXEC sp_helptext '[{0}].[{1}]';";
@@ -51,7 +54,6 @@ namespace DbPeek.Services.Database
                 {
                     command.CommandType = System.Data.CommandType.Text;
                     command.Connection = connection;
-
 
                     var contentBuilder = new StringBuilder();
 

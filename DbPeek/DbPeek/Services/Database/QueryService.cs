@@ -18,7 +18,7 @@ namespace DbPeek.Services.Database
                 .Replace("\"", string.Empty)
                 .Replace("/", string.Empty);
 
-            if (filteredSpName.Contains('.'))
+            if (filteredSpName.Contains('.')) //TODO: what if it contains multiple dots?
             {
                 var schemaSplit = filteredSpName.Split('.');
                 return new Tuple<string, string>(schemaSplit[0], schemaSplit[1]);

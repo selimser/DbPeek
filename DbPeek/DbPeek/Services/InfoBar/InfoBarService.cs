@@ -30,8 +30,6 @@ namespace DbPeek.Services.InfoBar
             infoBarUIElement.Unadvise(_cookie);
         }
 
-        //private readonly AsyncPackage package;
-
         public void OnActionItemClicked(IVsInfoBarUIElement infoBarUIElement, IVsInfoBarActionItem actionItem)
         {
             var context = Convert.ToString(actionItem.ActionContext);
@@ -58,10 +56,11 @@ namespace DbPeek.Services.InfoBar
                 default:
                     //close the thingy by default
                     //or throw error maybe and display to the user???
+
+                    _ = infoBarUIElement.Unadvise(_cookie);
                     break;
             }
         }
-
 
         public void ShowInfoBar(string message, params InfoBarHyperlink[] hyperLinkObjects)
         {
@@ -74,6 +73,7 @@ namespace DbPeek.Services.InfoBar
                 {
                     return;
                 }
+
                 var text = new InfoBarTextSpan(message);
 
                 var spans = new InfoBarTextSpan[] { text };
@@ -88,6 +88,7 @@ namespace DbPeek.Services.InfoBar
 
                 var factory = _serviceProvider.GetService(typeof(SVsInfoBarUIFactory)) as IVsInfoBarUIFactory;
                 Assumes.Present(factory);
+
                 IVsInfoBarUIElement element = factory.CreateInfoBar(infoBarModel);
                 element.Advise(this, out _cookie);
                 host.AddInfoBar(element);
