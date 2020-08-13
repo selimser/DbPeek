@@ -94,8 +94,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\ContextSprite.png" />
-    <Content Include="Resources\PeekConfigureCommand.png" />
-    <Content Include="Resources\PeekSpContextCommand.png" />
     <Content Include="Resources\PeekSpSpanCommandPackage.ico" />
     <VSCTCompile Include="PeekSpSpanCommandPackage.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
