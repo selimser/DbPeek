@@ -1,19 +1,15 @@
-﻿using System;
-using System.ComponentModel.Design;
-using System.Globalization;
-using System.Threading;
-using System.Threading.Tasks;
-using DbPeek.UserInterface;
+﻿using DbPeek.UserInterface;
 using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
+using System;
+using System.ComponentModel.Design;
 using Task = System.Threading.Tasks.Task;
 
-namespace DbPeek
+namespace DbPeek.Commands
 {
     /// <summary>
     /// Command handler
     /// </summary>
-    internal sealed class PeekConfigureCommand
+    internal sealed class ConfigureExtensionCommand
     {
         /// <summary>
         /// Command ID.
@@ -31,40 +27,30 @@ namespace DbPeek
         private readonly AsyncPackage package;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PeekConfigureCommand"/> class.
+        /// Initializes a new instance of the <see cref="ConfigureExtensionCommand"/> class.
         /// Adds our command handlers for menu (commands must exist in the command table file)
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
         /// <param name="commandService">Command service to add command to, not null.</param>
-        private PeekConfigureCommand(AsyncPackage package, OleMenuCommandService commandService)
+        private ConfigureExtensionCommand(AsyncPackage package, OleMenuCommandService commandService)
         {
             this.package = package ?? throw new ArgumentNullException(nameof(package));
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
 
             var menuCommandID = new CommandID(CommandSet, CommandId);
-            var menuItem = new MenuCommand(this.Execute, menuCommandID);
+            var menuItem = new MenuCommand(Execute, menuCommandID);
             commandService.AddCommand(menuItem);
         }
 
         /// <summary>
         /// Gets the instance of the command.
         /// </summary>
-        public static PeekConfigureCommand Instance
+        public static ConfigureExtensionCommand Instance
         {
             get;
             private set;
         }
 
-        /// <summary>
-        /// Gets the service provider from the owner package.
-        /// </summary>
-        private Microsoft.VisualStudio.Shell.IAsyncServiceProvider ServiceProvider
-        {
-            get
-            {
-                return this.package;
-            }
-        }
 
         /// <summary>
         /// Initializes the singleton instance of the command.
@@ -75,9 +61,10 @@ namespace DbPeek
             // Switch to the main thread - the call to AddCommand in PeekConfigureCommand's constructor requires
             // the UI thread.
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
-
-            OleMenuCommandService commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
-            Instance = new PeekConfigureCommand(package, commandService);
+            
+            var commandService = 
+                await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
+            Instance = new ConfigureExtensionCommand(package, commandService);
         }
 
         /// <summary>

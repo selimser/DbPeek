@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.PlatformUI;
 
-namespace WorkAlready
+namespace DbPeek.UserInterface
 {
     public class BaseDialogWindow : DialogWindow
     {

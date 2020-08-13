@@ -1,16 +1,16 @@
-﻿using System.Data.SqlClient;
+﻿using DbPeek.Services.Settings;
+using System.Data.SqlClient;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Media.Media3D;
 
-namespace DbPeek.Helpers.Database
+namespace DbPeek.Services.Database
 {
-    internal sealed class SpHelper
+    internal sealed class SpUtilsService
     {
-        private static SpHelper _instance;
+        private static SpUtilsService _instance;
         private static readonly object _lock = new object();
 
-        internal static SpHelper Instance
+        internal static SpUtilsService Instance
         {
             get
             {
@@ -18,7 +18,7 @@ namespace DbPeek.Helpers.Database
                 {
                     if (_instance == null)
                     {
-                        _instance = new SpHelper();
+                        _instance = new SpUtilsService();
                     }
 
                     return _instance;
@@ -26,6 +26,9 @@ namespace DbPeek.Helpers.Database
             }
         }
 
+        /// <summary>
+        /// Each template for specific version will go here (e.g. support for older versions)
+        /// </summary>
         internal struct CommandTempaltes
         {
             internal const string GetContents = "EXEC sp_helptext '[{0}].[{1}]';";
@@ -33,7 +36,7 @@ namespace DbPeek.Helpers.Database
 
         internal async Task<string> GetStoredProcedureAsync(string storedProcedureName)
         {
-            var procedureTuple = QueryHelper.ParseStoredProcedureName(storedProcedureName);
+            var procedureTuple = QueryService.ParseStoredProcedureName(storedProcedureName);
 
             var parsedCommand =
                 string.Format
@@ -41,17 +44,16 @@ namespace DbPeek.Helpers.Database
                     CommandTempaltes.GetContents,
                     procedureTuple.Item1,
                     procedureTuple.Item2
-                ); //need to check if the sp exists?
+                ); //need to check if the sp exists? TODO.
 
             using (var connection = new SqlConnection())
             {
-                connection.ConnectionString = SettingsHelper.ReadSetting<string>("TargetConnectionString");
+                connection.ConnectionString = VsShellSettingsService.ReadSetting<string>("TargetConnectionString");
 
                 using (var command = new SqlCommand(parsedCommand))
                 {
                     command.CommandType = System.Data.CommandType.Text;
                     command.Connection = connection;
-
 
                     var contentBuilder = new StringBuilder();
 
@@ -63,7 +65,7 @@ namespace DbPeek.Helpers.Database
                             while (await sqlReader.ReadAsync())
                             {
                                 contentBuilder.Append(sqlReader.GetString(0));
-                            } 
+                            }
                         }
 
                         sqlReader.Close();
@@ -76,8 +78,5 @@ namespace DbPeek.Helpers.Database
                 }
             }
         }
-        
-
-        
     }
 }

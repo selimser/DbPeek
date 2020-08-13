@@ -2,12 +2,12 @@
 using Microsoft.VisualStudio.Shell.Interop;
 using System;
 
-namespace DbPeek.Helpers
+namespace DbPeek.Services.Notification
 {
-    public static class NotificationHelper
+    public static class NotificationService
     {
         private static IServiceProvider _serviceProvider;
-        
+
         internal static void Initialise(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;

@@ -1,7 +1,8 @@
-﻿using DbPeek.Helpers;
+﻿using DbPeek.Helpers.Editor;
+using DbPeek.Services.Notification;
+using DbPeek.Services.Settings;
 using System;
 using System.Windows;
-using WorkAlready;
 
 namespace DbPeek.UserInterface
 {
@@ -15,6 +16,7 @@ namespace DbPeek.UserInterface
             InitializeComponent();
             SetDefaultWindowProperties();
             SetExistingConnectionString();
+            UpdateCacheFigures();
         }
 
         private void SetDefaultWindowProperties()
@@ -27,11 +29,19 @@ namespace DbPeek.UserInterface
             btnResetAllSettings_DEBUG.IsEnabled = true;
             btnResetAllSettings_DEBUG.Visibility = Visibility.Visible;
 #endif
+
+            
         }
 
         private void SetExistingConnectionString()
         {
-            connectionStringInput.Text = SettingsHelper.ReadSetting<string>("TargetConnectionString");
+            connectionStringInput.Text = VsShellSettingsService.ReadSetting<string>("TargetConnectionString");
+        }
+
+        private void UpdateCacheFigures()
+        {
+            FileCountLabel.Content = FileService.GetCacheFileCount();
+            CacheTotalSizeLabel.Content = FileService.GetTotalCacheSize().AsFormatted();
         }
 
         private void btnSaveSettings_Click(object sender, RoutedEventArgs e)
@@ -44,24 +54,37 @@ namespace DbPeek.UserInterface
 
             try
             {
-                SettingsHelper.WriteSetting("TargetConnectionString", connectionStringInput.Text);
+                VsShellSettingsService.WriteSetting("TargetConnectionString", connectionStringInput.Text);
 
-                if (!SettingsHelper.ReadSetting<bool>("IsExtensionConfigured"))
+                if (!VsShellSettingsService.ReadSetting<bool>("IsExtensionConfigured"))
                 {
-                    SettingsHelper.WriteSetting("IsExtensionConfigured", true);
+                    VsShellSettingsService.WriteSetting("IsExtensionConfigured", true);
                 }
             }
             catch (Exception ex)
             {
-                NotificationHelper.PopMessage
+                NotificationService.PopMessage
                 (
-                    "Error", 
-                    $"An error occurred when saving the setting.\n{ex.Message}\n{ex.StackTrace}",
+                    "Something went wrong!", 
+                    $"An error occurred when saving the setting.\n{ex.Message}",
                     messageIcon: Microsoft.VisualStudio.Shell.Interop.OLEMSGICON.OLEMSGICON_WARNING
                 );
             }
 
             Close();
+        }
+
+        private void ClearCache_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                FileService.ClearCache();
+                UpdateCacheFigures();
+            }
+            catch (Exception ex)
+            {
+                NotificationService.PopMessage("Something went wrong!", $"{ex.Message}");
+            }
         }
     }
 }
