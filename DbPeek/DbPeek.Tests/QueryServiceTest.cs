@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using DbPeek.Services.Database;
+using Xunit;
 
 namespace DbPeek.Tests
 {
@@ -9,6 +10,8 @@ namespace DbPeek.Tests
         public void SelimTest()
         {
             Assert.Equal(1, 1);
+
+            
         }
     }
 }
