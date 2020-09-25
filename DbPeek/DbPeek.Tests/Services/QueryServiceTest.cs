@@ -1,7 +1,8 @@
-﻿using DbPeek.Services.Database;
+﻿using DbPeek.Models;
+using DbPeek.Services.Database;
 using Xunit;
 
-namespace DbPeek.Tests
+namespace DbPeek.Tests.Services
 {
     public class QueryServiceTest
     {
@@ -140,7 +141,7 @@ namespace DbPeek.Tests
             Assert.Null(result.Name);
             Assert.False(result.Success);
             Assert.NotNull(result.Error);
-            Assert.Equal(Models.ErrorCodes.InvalidCharacters, result.Error.ErrorCode);
+            Assert.Equal(ErrorCodes.InvalidCharacters, result.Error.ErrorCode);
         }
     }
 }
