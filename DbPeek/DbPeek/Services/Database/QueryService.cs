@@ -32,7 +32,7 @@ namespace DbPeek.Services.Database
         private static (bool IsNameValid, ErrorCodes? ErrorCode) ValidateSpName(string rawString, out Tuple<string, string> parsedValue)
         {
             var trimmedSpName = rawString.TrimStart().TrimEnd();
-            var containsInvalidChars = trimmedSpName.ContainsAny(new[] { ",", ";", ":", "\"", "/", "'", " " });
+            var containsInvalidChars = trimmedSpName.ContainsAny(new[] { ",", ";", ":", "\"", "/", "'" });
 
             if (containsInvalidChars)
             {
