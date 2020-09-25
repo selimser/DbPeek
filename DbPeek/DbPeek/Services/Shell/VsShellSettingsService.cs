@@ -2,7 +2,7 @@
 using Microsoft.VisualStudio.Shell.Settings;
 using System;
 
-namespace DbPeek.Services.Settings
+namespace DbPeek.Services.Shell
 {
     internal static class VsShellSettingsService
     {

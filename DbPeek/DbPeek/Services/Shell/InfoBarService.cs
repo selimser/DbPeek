@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using System;
 
-namespace DbPeek.Services.InfoBar
+namespace DbPeek.Services.Shell
 {
     internal class InfoBarService : IVsInfoBarUIEvents
     {
@@ -15,14 +15,14 @@ namespace DbPeek.Services.InfoBar
 
         public static InfoBarService Instance { get; private set; }
 
-        public static void Initialize(IServiceProvider serviceProvider)
-        {
-            Instance = new InfoBarService(serviceProvider);
-        }
-
         public InfoBarService(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
+        }
+
+        public static void Initialize(IServiceProvider serviceProvider)
+        {
+            Instance = new InfoBarService(serviceProvider);
         }
 
         public void OnClosed(IVsInfoBarUIElement infoBarUIElement)
