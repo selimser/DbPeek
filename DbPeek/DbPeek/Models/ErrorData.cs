@@ -5,7 +5,7 @@ namespace DbPeek.Models
 {
     internal class ErrorData
     {
-        public string ErrorMessage { get; private set; }
+        public string ErrorMessage => $"An error has occurred.\n{(int)ErrorCode} - {Enum.GetName(typeof(ErrorCodes), ErrorCode)}";
         public ErrorCodes ErrorCode { get; set; }
         public Exception ExceptionData { internal get; set; }
 
@@ -15,11 +15,6 @@ namespace DbPeek.Models
             var builtString = $"ERROR!!! {(int)ErrorCode} | {ExceptionData.Message} | {ExceptionData.StackTrace}";
             Debug.WriteLine(builtString);
             return builtString;
-        }
-
-        public string GenerateMessage()
-        {
-            return ErrorMessage = $"An error has occurred.\n{Enum.GetName(typeof(ErrorCodes), ErrorCode)}\n{ExceptionData.Message}";
         }
     }
 }
