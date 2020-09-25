@@ -54,16 +54,11 @@ namespace DbPeek.Helpers.Editor
             return Directory.GetFiles(DbPeekDumpPath, "*.*", SearchOption.AllDirectories);
         }
 
-        internal static string AsFormatted(this long totalBytes)
-        {
-            return GetSizeUnit(totalBytes, 2);
-        }
-
-        private static string GetSizeUnit(long value, uint precision = 2)
+        internal static string CalculateSizeSuffix(long value, uint precision = 2)
         {
             if (value < 0)
             {
-                return "-" + GetSizeUnit(-value);
+                return "-" + CalculateSizeSuffix(-value);
             }
 
             if (value == 0)

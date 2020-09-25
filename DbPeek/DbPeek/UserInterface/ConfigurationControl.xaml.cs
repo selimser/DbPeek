@@ -18,7 +18,6 @@ namespace DbPeek.UserInterface
             SetExistingConnectionString();
             UpdateCacheFigures();
         }
-
         private void SetDefaultWindowProperties()
         {
             Title = "Configure DbPeek";
@@ -28,9 +27,7 @@ namespace DbPeek.UserInterface
 #if DEBUG
             btnResetAllSettings_DEBUG.IsEnabled = true;
             btnResetAllSettings_DEBUG.Visibility = Visibility.Visible;
-#endif
-
-            
+#endif  
         }
 
         private void SetExistingConnectionString()
@@ -41,7 +38,7 @@ namespace DbPeek.UserInterface
         private void UpdateCacheFigures()
         {
             FileCountLabel.Content = FileService.GetCacheFileCount();
-            CacheTotalSizeLabel.Content = FileService.GetTotalCacheSize().AsFormatted();
+            CacheTotalSizeLabel.Content = FileService.GetTotalCacheSize();
         }
 
         private void btnSaveSettings_Click(object sender, RoutedEventArgs e)
