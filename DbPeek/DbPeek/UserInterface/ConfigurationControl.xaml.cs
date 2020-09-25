@@ -1,6 +1,6 @@
 ﻿using DbPeek.Helpers.Editor;
 using DbPeek.Services.Notification;
-using DbPeek.Services.Settings;
+using DbPeek.Services.Shell;
 using System;
 using System.Windows;
 

@@ -22,8 +22,8 @@ namespace DbPeek.Tests
         {
             var result = QueryService.ParseStoredProcedureName(input);
 
-            Assert.Equal(ExpectedDefaultSchema, result.Item1);
-            Assert.Equal(ExpectedStoredProcedureName, result.Item2);
+            Assert.Equal(ExpectedDefaultSchema, result.Schema);
+            Assert.Equal(ExpectedStoredProcedureName, result.Name);
 
         }
 
@@ -34,8 +34,8 @@ namespace DbPeek.Tests
         {
             var result = QueryService.ParseStoredProcedureName(input);
 
-            Assert.Equal(ExpectedDefaultSchema, result.Item1);
-            Assert.Equal(ExpectedStoredProcedureName, result.Item2);
+            Assert.Equal(ExpectedDefaultSchema, result.Schema);
+            Assert.Equal(ExpectedStoredProcedureName, result.Name);
         }
 
         [Theory]
@@ -49,8 +49,8 @@ namespace DbPeek.Tests
         {
             var result = QueryService.ParseStoredProcedureName(input);
 
-            Assert.Equal(ExpectedDefaultSchema, result.Item1);
-            Assert.Equal(ExpectedStoredProcedureName, result.Item2);
+            Assert.Equal(ExpectedDefaultSchema, result.Schema);
+            Assert.Equal(ExpectedStoredProcedureName, result.Name);
         }
 
         [Theory]
@@ -62,8 +62,8 @@ namespace DbPeek.Tests
         {
             var result = QueryService.ParseStoredProcedureName(input);
 
-            Assert.Equal(ExpectedCustomSchema, result.Item1);
-            Assert.Equal(ExpectedStoredProcedureName, result.Item2);
+            Assert.Equal(ExpectedCustomSchema, result.Schema);
+            Assert.Equal(ExpectedStoredProcedureName, result.Name);
         }
 
         [Theory]
@@ -77,15 +77,9 @@ namespace DbPeek.Tests
         {
             var result = QueryService.ParseStoredProcedureName(input);
 
-            Assert.Equal(ExpectedCustomSchema, result.Item1);
-            Assert.Equal(ExpectedStoredProcedureName, result.Item2);
+            Assert.Equal(ExpectedCustomSchema, result.Schema);
+            Assert.Equal(ExpectedStoredProcedureName, result.Name);
         }
 
-        [Theory]
-        [InlineData("dbo.Test.Procedure")]
-        public void QueryService_DefaultSchema_NameContainsDots(string input)
-        {
-
-        }
     }
 }

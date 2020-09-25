@@ -1,9 +1,8 @@
 ﻿using DbPeek.Helpers.Editor;
 using DbPeek.Services.Database;
 using DbPeek.Services.Editor;
-using DbPeek.Services.InfoBar;
 using DbPeek.Services.Notification;
-using DbPeek.Services.Settings;
+using DbPeek.Services.Shell;
 using Microsoft.VisualStudio.Shell;
 using System;
 using System.ComponentModel.Design;
@@ -46,7 +45,7 @@ namespace DbPeek.Commands
             var menuItem = new MenuCommand(Execute, menuCommandID);
             commandService.AddCommand(menuItem);
 
-            InfoBarService.Initialize((IServiceProvider)ServiceProvider);
+            InfoBarService.Initialize((IServiceProvider)ServiceProvider); //TODO: possibly move this to InitialiseAsync() method
 
         }
 
@@ -86,6 +85,7 @@ namespace DbPeek.Commands
             VsShellSettingsService.Initialise(package);
             NotificationService.Initialise(package);
             EditorService.Initialise(package);
+            StatusBarService.Initialize(package);
 
         }
 
@@ -126,8 +126,15 @@ namespace DbPeek.Commands
                         return await SpUtilsService.Instance.GetStoredProcedureAsync(capturedText);
                     });
 
-                    var dumpFile = FileService.CreateFileWithContents(result);
-                    VsShellUtilities.OpenDocument((IServiceProvider)ServiceProvider, @dumpFile);
+                    if (!result.Success)
+                    {
+                        //write the user error message??
+                    }
+                    else
+                    {
+                        var dumpFile = FileService.CreateFileWithContents(result.Content);
+                        VsShellUtilities.OpenDocument((IServiceProvider)ServiceProvider, @dumpFile);
+                    }
                 }
                 catch (Exception ex)
                 {
