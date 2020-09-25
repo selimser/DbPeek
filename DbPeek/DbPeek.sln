@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.30320.27
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbPeek", "DbPeek\DbPeek.csproj", "{34593FA7-8432-4EA7-BF27-2EB594FB9B93}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbPeek.Tests", "DbPeek.Tests\DbPeek.Tests.csproj", "{815CB1A4-AC13-40F8-8B14-8887C1A1FF83}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{34593FA7-8432-4EA7-BF27-2EB594FB9B93}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{34593FA7-8432-4EA7-BF27-2EB594FB9B93}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{34593FA7-8432-4EA7-BF27-2EB594FB9B93}.Release|Any CPU.Build.0 = Release|Any CPU
+		{815CB1A4-AC13-40F8-8B14-8887C1A1FF83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{815CB1A4-AC13-40F8-8B14-8887C1A1FF83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{815CB1A4-AC13-40F8-8B14-8887C1A1FF83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{815CB1A4-AC13-40F8-8B14-8887C1A1FF83}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
