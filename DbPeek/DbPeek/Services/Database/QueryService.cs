@@ -40,11 +40,14 @@ namespace DbPeek.Services.Database
                 return (false, ErrorCodes.InvalidCharacters);
             }
 
-            var filteredSpName = trimmedSpName.Split('.');
+            var filteredSpName = trimmedSpName
+                .Replace("[", string.Empty)
+                .Replace("]", string.Empty)
+                .Split('.');
 
             if (filteredSpName.Length == 1) //without a schema
             {
-                parsedValue = new Tuple<string, string>(filteredSpName[0], filteredSpName[1]);
+                parsedValue = new Tuple<string, string>("dbo", filteredSpName[0]);
                 return (true, null);
             }
             else if (filteredSpName.Length == 2) //with a schema
