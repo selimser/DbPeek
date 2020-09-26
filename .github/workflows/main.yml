@@ -30,11 +30,11 @@ jobs:
       - name: Restore NuGet Packages
         run: nuget restore DbPeek/DbPeek.sln
   
-      - name: Build Projects
-        run: msbuild DbPeek/DbPeek.sln /p:Configuration=Release /p:DeployOnBuild=false /p:PublishProfile=FolderProfile
+      #- name: Build Projects
+      #  run: msbuild DbPeek/DbPeek.sln /p:Configuration=Release /p:DeployOnBuild=false /p:PublishProfile=FolderProfile
         
       - name: Run Unit Tests
-        run: dotnet test --no-restore --verbosity normal
+        run: dotnet test DbPeek/DbPeek.Tests/DbPeek.Tests.csproj --no-restore --verbosity normal
   
       # - name: Upload Artifact
       #   uses: actions/upload-artifact@v1.0.0
