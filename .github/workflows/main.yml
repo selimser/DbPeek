@@ -28,10 +28,10 @@ jobs:
         uses: NuGet/setup-nuget@v1.0.2
       
       - name: Restore NuGet Packages
-        run: nuget restore DbPeek.sln
+        run: nuget restore DbPeek/DbPeek.sln
   
-      # - name: Build and Publish Web App
-      #   run: msbuild DbPeek.sln /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FolderProfile
+      - name: Build and Publish Web App
+        run: msbuild DbPeek/DbPeek.sln /p:Configuration=Release /p:DeployOnBuild=false /p:PublishProfile=FolderProfile
   
       # - name: Upload Artifact
       #   uses: actions/upload-artifact@v1.0.0
